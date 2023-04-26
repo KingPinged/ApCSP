@@ -191,6 +191,9 @@ function checkInputValid(problem, textBox: TextBox)
 				if answerValue == 10 then
 					print("passed")
 
+					answer.Text = "Correct!"
+					task.wait(2)
+
 					passedLevel()
 				end
 			else
