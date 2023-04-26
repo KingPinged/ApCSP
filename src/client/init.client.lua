@@ -22,6 +22,11 @@ end
 local problems: { { number } } = {
 	{ 5, 3, 2, 1 },
 	{ 3, 3, 1, 2 },
+	{ 2, 5, 2, 2 },
+	{ 3, 7, 1 },
+	{ 2, 8 },
+	{ 3, 7 },
+	{ 10, 1, 1 },
 }
 --[[
  5 + (3 * 2) - 1
@@ -50,6 +55,8 @@ function calculateAnswer(problem): number | boolean
 		problemString = problemString .. v.Text
 		table.insert(problemArray, v.Text)
 	end
+
+	print(problemString)
 
 	local whereIsMultiply = tonumber(table.find(problemArray, "*"))
 
@@ -139,7 +146,6 @@ function checkAllUi()
 		if v:IsA("TextBox") then
 			if table.find({ "/", "*", "+", "-" }, v.Text) then
 				table.insert(currentlyUsing, v.Text)
-				print("adding based on checkallui")
 			end
 		end
 	end
@@ -149,6 +155,12 @@ function passedLevel()
 	currentLevel = currentLevel + 1
 	currentlyUsing = {}
 
+	for _, v in pairs(problemsUIInstances) do
+		if v:IsA("TextBox") then
+			v.Text = ""
+		end
+	end
+
 	for _, v in pairs(events) do
 		v:Disconnect()
 	end
@@ -157,16 +169,18 @@ function passedLevel()
 		v:Destroy()
 	end
 
+	problemsUIInstances = {}
+
 	createUi(problems[currentLevel])
 	checkAllUi()
 end
 
 function checkInputValid(problem, textBox: TextBox)
+	print("checking input")
 	if table.find({ "/", "*", "+", "-" }, textBox.Text) then
 		if table.find(currentlyUsing, textBox.Text) then
 			textBox.Text = ""
 		else
-			print("adding to currentlyused")
 			table.insert(currentlyUsing, textBox.Text)
 
 			--valid
@@ -176,11 +190,7 @@ function checkInputValid(problem, textBox: TextBox)
 
 				if answerValue == 10 then
 					print("passed")
-					for _, v in pairs(problemsUIInstances) do
-						if v:IsA("TextBox") then
-							v.Text = ""
-						end
-					end
+
 					passedLevel()
 				end
 			else
@@ -192,6 +202,8 @@ function checkInputValid(problem, textBox: TextBox)
 	end
 
 	checkAllUi()
+
+	return true
 end
 
 function createUi(problem)
@@ -208,13 +220,7 @@ function createUi(problem)
 
 			local e
 			e = blank:GetPropertyChangedSignal("Text"):Connect(function()
-				if problems[currentLevel] ~= problem then
-					e:Disconnect()
-					print("WHY NO DISCONNECT")
-					return
-				end
 				checkInputValid(problem, blank)
-				print("changed", problem)
 			end)
 			table.insert(events, e)
 		end
