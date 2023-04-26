@@ -46,17 +46,13 @@ local events = {}
 function calculateAnswer(problem): number | boolean
 	local answer: number = 0
 
-	local problemString = ""
 	local problemArray = {}
 	for _, v: TextBox | TextLabel in pairs(problemsUIInstances) do
 		if v.Text == "" then
 			return false
 		end
-		problemString = problemString .. v.Text
 		table.insert(problemArray, v.Text)
 	end
-
-	print(problemString)
 
 	local whereIsMultiply = tonumber(table.find(problemArray, "*"))
 
